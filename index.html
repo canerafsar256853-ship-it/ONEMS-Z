@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sistem Girişi - Güvenlik Kontrolü</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+        :root {
+            --bg-dark: #0f0814;
+            --purple-primary: #8b5cf6;
+            --purple-deep: #4c1d95;
+            --purple-light: #c084fc;
+            --accent-pink: #f43f5e;
+            --text-light: #f3e8ff;
+            --card-bg: rgba(23, 15, 38, 0.75);
+            --border-glow: rgba(139, 92, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121316;
+            color: #a0a5b1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+                  .login-box {
+            background: #1c1e24;
+            padding: 2.5rem;
+            border-radius: 8px;
+            border: 1px solid #2d3139;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .login-box i { font-size: 2.5rem; color: #6b7280; margin-bottom: 1rem; }
+        .login-box h2 { font-size: 1.2rem; font-weight: 500; color: #e5e7eb; margin-bottom: 0.5rem; letter-spacing: 0.5px; }
+        .login-box p { font-size: 0.85rem; color: #6b7280; margin-bottom: 1.5rem; }
+
+        .input-group { position: relative; margin-bottom: 1.2rem; }
+        .input-group input {
+            width: 100%; padding: 12px 15px; background: #121316;
+            border: 1px solid #374151; border-radius: 6px; color: #fff;
+            font-size: 1rem; outline: none; text-align: center; letter-spacing: 2px;
+        }
+
+        .login-btn {
+            width: 100%; padding: 12px; background: #374151; color: #e5e7eb;
+            border: none; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
+        }
+
+        .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 0.8rem; display: none; }
+
+        #main-content {
+            opacity: 0; visibility: hidden;
+            transition: opacity 1.2s ease;
+            position: relative; z-index: 1; padding-bottom: 4rem;
+        }
+
+        #canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+                  header { text-align: center; padding: 4rem 1rem 2rem 1rem; position: relative; }
+        .main-title {
+            font-family: 'Playfair Display', serif; font-size: 3rem;
+            background: linear-gradient(135deg, #f3e8ff, #c084fc, #e879f9);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;
+        }
+        .subtitle { font-size: 1.1rem; color: #d8b4fe; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; }
+
+        .counter-container {
+            max-width: 800px; margin: 2rem auto; padding: 2rem;
+            background: var(--card-bg); border: 1px solid var(--border-glow);
+            border-radius: 20px; backdrop-filter: blur(10px); text-align: center;
+        }
+        .counter-title { font-size: 1rem; color: var(--purple-light); margin-bottom: 1.5rem; text-transform: uppercase; }
+        .timer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; }
+        .time-box { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(192, 132, 252, 0.2); padding: 1rem 0.5rem; border-radius: 12px; }
+        .time-number { font-size: 2rem; font-weight: 600; color: #fff; font-family: 'Playfair Display', serif; }
+        .time-label { font-size: 0.75rem; color: #c084fc; margin-top: 0.2rem; }
+                  .container { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 3rem 0 1.5rem 0; border-bottom: 1px solid var(--border-glow); padding-bottom: 0.8rem; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #f3e8ff; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .add-btn {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-deep));
+            color: #fff; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+        }
+
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; }
+        .polaroid-card { background: #191224; padding: 12px 12px 20px 12px; border-radius: 12px; border: 1px solid var(--border-glow); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+        .polaroid-img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; background: #0f0814; }
+        .polaroid-caption { margin-top: 12px; text-align: center; }
+        .polaroid-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #f3e8ff; margin-bottom: 4px; }
+        .polaroid-date { font-size: 0.75rem; color: var(--purple-light); margin-bottom: 6px; }
+        .polaroid-note { font-size: 0.85rem; color: #d1d5db; font-style: italic; }
+
+        .envelope-section { text-align: center; margin: 4rem 0; }
+        .envelope-card { background: linear-gradient(135deg, rgba(76, 29, 149, 0.4), rgba(23, 15, 38, 0.8)); border: 1px dashed var(--purple-light); padding: 3rem 2rem; border-radius: 20px; cursor: pointer; display: inline-block; max-width: 500px; width: 100%; }
+        .envelope-card i { font-size: 3.5rem; color: var(--purple-light); margin-bottom: 1rem; }
+                  .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }
+        .modal-content { background: #191224; border: 1px solid var(--purple-light); padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 20px; color: #a1a1aa; font-size: 1.5rem; cursor: pointer; }
+
+        .form-group { margin-bottom: 1.2rem; text-align: left; }
+        .form-group label { display: block; font-size: 0.85rem; color: var(--purple-light); margin-bottom: 0.4rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; background: rgba(15, 8, 20, 0.8); border: 1px solid var(--border-glow); border-radius: 8px; color: #fff; outline: none; }
+        .submit-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--purple-primary), var(--purple-deep)); border: none; border-radius: 8px; color: #fff; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+
+        .letter-box { font-family: 'Playfair Display', serif; line-height: 1.8; color: #f3e8ff; text-align: left; font-size: 1.05rem; }
+        @media (max-width: 600px) { .main-title { font-size: 2.2rem; } .timer-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <!-- GÜVENLİK KİLİT EKRANI -->
+    <div id="lock-screen">
+        <div class="login-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h2>GÜVENLİK KONTROLÜ</h2>
+            <p>Devam etmek için erişim kodunu giriniz.</p>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <input type="password" id="password-input" placeholder="••••••••" required autocomplete="off">
+                </div>
+                <button type="submit" class="login-btn">Sisteme Giriş Yap</button>
+                <div id="error-msg" class="error-msg">Geçersiz erişim kodu!</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BACKGROUND CANVAS -->
+    <canvas id="canvas-bg"></canvas>
+        <!-- ANA ROMANTİK SİTE -->
+    <div id="main-content">
+        <header>
+            <h1 class="main-title">Caner & Havin</h1>
+            <p class="subtitle">Sonsuza Dek Birlikte</p>
+        </header>
+
+        <!-- CANLI ZAMAN SAYACI -->
+        <div class="counter-container">
+            <div class="counter-title"><i class="fa-solid fa-heart" style="color: #f43f5e;"></i> Birlikte Geçen Süremiz</div>
+            <div class="timer-grid">
+                <div class="time-box"><div id="years" class="time-number">0</div><div class="time-label">Yıl</div></div>
+                <div class="time-box"><div id="days" class="time-number">0</div><div class="time-label">Gün</div></div>
+                <div class="time-box"><div id="hours" class="time-number">00</div><div class="time-label">Saat</div></div>
+                <div class="time-box"><div id="minutes" class="time-number">00</div><div class="time-label">Dakika</div></div>
+                <div class="time-box"><div id="seconds" class="time-number">00</div><div class="time-label">Saniye</div></div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- ANI DUVARI -->
+            <div class="section-header">
+                <div class="section-title"><i class="fa-solid fa-images" style="color: #c084fc;"></i> Anı Albümümüz</div>
+                <button class="add-btn" onclick="openModal('upload-modal')"><i class="fa-solid fa-plus"></i> Yeni Anı Ekle</button>
+            </div>
+
+            <div class="gallery-grid" id="gallery-grid">
+                <div class="polaroid-card">
+                    <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=600&q=80" class="polaroid-img" alt="Anı">
+                    <div class="polaroid-caption">
+                        <div class="polaroid-title">İlk Adımımız</div>
+                        <div class="polaroid-date">2 Kasım 2026</div>
+                        <div class="polaroid-note">"Hayatımızın en güzel hikayesinin başladığı an..."</div>
+                    </div>
+                </div>
+                <div class="polaroid-card">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=600&q=80" class="polaroid-img" alt="Anı">
+                    <div class="polaroid-caption">
+                        <div class="polaroid-title">Göz Göze</div>
+                        <div class="polaroid-date">Her An Her Saniye</div>
+                        <div class="polaroid-note">"Seninle geçen her dakika bir ömre bedel."</div>
+                    </div>
+                </div>
+            </div>
+                        <!-- GİZLİ MEKTUP ZARFI -->
+            <div class="envelope-section">
+                <div class="envelope-card" onclick="openModal('letter-modal')">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #f3e8ff;">Sana Özel Bir Mektup Var</h3>
+                    <p style="font-size: 0.85rem; color: #c084fc; margin-top: 0.5rem;">Okumak için tıklayabilirsin Havin 💜</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOTOĞRAF YÜKLEME MODAL -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('upload-modal')">&times;</span>
+            <h3 style="font-family: 'Playfair Display', serif; color: #f3e8ff; margin-bottom: 1rem;">Yeni Bir Anı Ekle</h3>
+            <form onsubmit="handleMemorySubmit(event)">
+                <div class="form-group"><label>Fotoğraf Seç</label><input type="file" id="memory-img" accept="image/*" required></div>
+                <div class="form-group"><label>Başlık</label><input type="text" id="memory-title" placeholder="Örn: Birlikte İlk Kahvemiz" required></div>
+                <div class="form-group"><label>Tarih</label><input type="text" id="memory-date" placeholder="Örn: 2 Kasım 2026" required></div>
+                <div class="form-group"><label>Özel Notunuz</label><textarea id="memory-note" rows="3" placeholder="O günle ilgili hislerin..." required></textarea></div>
+                <button type="submit" class="submit-btn">Anıyı Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MEKTUP MODAL -->
+    <div id="letter-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('letter-modal')">&times;</span>
+            <div class="letter-box">
+                <h2 style="color: #c084fc; margin-bottom: 1rem; text-align: center;">Sevgili Havin,</h2>
+                <p>Bu küçük köşe, sadece ikimizin sığınağı olsun diye tasarlandı. Hayatın karmaşası içinde geri dönüp bakabileceğimiz, ne kadar güzel anılar biriktirdiğimizi görebileceğimiz bize özel bir dünya...</p>
+                <br><p>Seninle geçen her saniye hayatıma renk ve huzur katıyor. İyi ki varsın, iyi ki yanımdasın.</p>
+                <br><p style="text-align: right; color: #c084fc;">— Caner</p>
+            </div>
+        </div>
+    </div>
+        <script>
+        const SECRET_PASS = "12042024";
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            const lockScreen = document.getElementById('lock-screen');
+            const mainContent = document.getElementById('main-content');
+
+            if (pass === SECRET_PASS) {
+                lockScreen.style.opacity = '0';
+                setTimeout(() => {
+                    lockScreen.style.visibility = 'hidden';
+                    mainContent.style.visibility = 'visible';
+                    mainContent.style.opacity = '1';
+                    initParticles();
+                }, 800);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        const startDate = new Date(2026, 10, 2, 19, 13, 0);
+
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - startDate;
+            if (diff < 0) return;
+
+            const seconds = Math.floor((diff / 1000) % 60);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 365);
+            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+
+            document.getElementById('years').innerText = years;
+            document.getElementById('days').innerText = days;
+            document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+            document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+        }
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function handleMemorySubmit(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('memory-img');
+            const title = document.getElementById('memory-title').value;
+            const date = document.getElementById('memory-date').value;
+            const note = document.getElementById('memory-note').value;
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgSrc = e.target.result;
+                    addMemoryCard(imgSrc, title, date, note);
+                    saveMemoryToLocal({ imgSrc, title, date, note });
+                    closeModal('upload-modal');
+                    e.target.value = '';
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function addMemoryCard(imgSrc, title, date, note) {
+            const grid = document.getElementById('gallery-grid');
+            const card = document.createElement('div');
+            card.className = 'polaroid-card';
+            card.innerHTML = `
+                <img src="${imgSrc}" class="polaroid-img" alt="${title}">
+                <div class="polaroid-caption">
+                    <div class="polaroid-title">${title}</div>
+                    <div class="polaroid-date">${date}</div>
+                    <div class="polaroid-note">"${note}"</div>
+                </div>
+            `;
+            grid.prepend(card);
+        }
+
+        function saveMemoryToLocal(memory) {
+            let memories = JSON.parse(localStorage.getItem('caner_havin_memories') || '[]');
+            memories.push(memory);
+            localStorage.setItem('caner_havin_memories', JSON.stringify(memories));
+        }
+
+        function loadSavedMemories() {
+            let memories = JSON.parse(localStorage.getItem('caner_havin_memories') || '[]');
+            memories.forEach(m => addMemoryCard(m.imgSrc, m.title, m.date, m.note));
+        }
+        window.onload = loadSavedMemories;
+
+        function initParticles() {
+            const canvas = document.getElementById('canvas-bg');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            for(let i = 0; i < 40; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 3 + 1,
+                    alpha: Math.random() * 0.5 + 0.2,
+                    speedY: Math.random() * 0.5 + 0.2
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(192, 132, 252, ${p.alpha})`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = "#c084fc";
+                    ctx.fill();
+                    p.y -= p.speedY;
+                    if(p.y < 0) p.y = canvas.height;
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+    </script>
+</body>
+</html>
