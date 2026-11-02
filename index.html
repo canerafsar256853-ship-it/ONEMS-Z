@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caner & Havin Özel Alan</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg-color: #1a0f2c;
+            --card-bg: #2d1b4e;
+            --accent-color: #9c27b0;
+            --accent-hover: #ba68c8;
+            --text-color: #f3e5f5;
+            --text-muted: #d1c4e9;
+            --delete-color: #e53935;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+              /* Şifre Ekranı */
+        #auth-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-card {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+            border: 1px solid rgba(156, 39, 176, 0.3);
+        }
+
+        .auth-card h2 {
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .auth-card input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            border: 1px solid #4a148c;
+            background-color: #12071f;
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+        }
+
+        .auth-card button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .auth-card button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .error-msg {
+            color: #ff8a80;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
+              /* Ana İçerik */
+        #main-content {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #e1bee7;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+        }
+
+        /* Canlı Sayaç */
+        .counter-card {
+            background: linear-gradient(135deg, #4a148c, #7b1fa2);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .counter-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #f3e5f5;
+        }
+
+        #time-counter {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(156, 39, 176, 0.2);
+        }
+
+        .section-card h3 {
+            margin-bottom: 15px;
+            color: #e1bee7;
+            border-bottom: 1px solid rgba(156, 39, 176, 0.3);
+            padding-bottom: 8px;
+        }
+              textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #4a148c;
+            background-color: #12071f;
+            color: white;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        button.action-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        button.action-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Fotoğraf Grid */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .photo-item {
+            position: relative;
+            background: white;
+            padding: 8px 8px 30px 8px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transform: rotate(var(--rot, 0deg));
+            transition: transform 0.3s;
+        }
+
+        .photo-item:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 10;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+              .delete-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--delete-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 12px;
+            line-height: 24px;
+            text-align: center;
+        }
+
+        /* Liste Alanları */
+        .item-list {
+            list-style: none;
+            margin-top: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .item-list li {
+            background: #12071f;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--accent-color);
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-delete-btn {
+            background: transparent;
+            color: var(--delete-color);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Şifre Giriş Ekranı -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h2>🔒 Özel Alan</h2>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #d1c4e9;">Lütfen şifreyi giriniz:</p>
+            <input type="password" id="password-input" placeholder="••••••••">
+            <button onclick="checkPassword()">Giriş Yap</button>
+            <div id="error-msg" class="error-msg">Şifre yanlış!</div>
+        </div>
+    </div>
+        <!-- Ana Uygulama Ekranı -->
+    <div id="main-content">
+        <header>
+            <h1>Caner & Havin 💜</h1>
+            <p>Bizim Dünyamız</p>
+        </header>
+
+        <!-- Canlı Sayaç -->
+        <div class="counter-card">
+            <h3>Birlikte Geçen Zamanımız ⏳</h3>
+            <div id="time-counter">Yükleniyor...</div>
+        </div>
+
+        <!-- Fotoğraf Albümü (Manuel / Yerel Yükleme) -->
+        <div class="section-card">
+            <h3>📸 Anı Albümü & Fotoğraflar</h3>
+            <input type="file" id="photo-file" accept="image/*" style="margin-bottom: 10px; color: var(--text-muted);">
+            <button class="action-btn" onclick="uploadPhotoLocally()">Fotoğraf Ekle</button>
+            <div id="photo-grid" class="photo-grid"></div>
+        </div>
+                <!-- Notlar / Sözler -->
+        <div class="section-card">
+            <h3>💌 Günlük Sözler & Notlar</h3>
+            <textarea id="note-input" rows="2" placeholder="Bugüne ait bir not ya da söz yazın..."></textarea>
+            <button class="action-btn" onclick="addNote()">Not Ekle</button>
+            <ul id="note-list" class="item-list"></ul>
+        </div>
+
+        <!-- Soru & Cevap Havuzu -->
+        <div class="section-card">
+            <h3>💬 Soru & Cevap Havuzu</h3>
+            <input type="text" id="qa-input" placeholder="Bir soru yaz veya cevapla...">
+            <button class="action-btn" onclick="addQA()">Gönder</button>
+            <ul id="qa-list" class="item-list"></ul>
+        </div>
+    </div>
+        <script>
+        // --- YAPILANDIRMA BİLGİLERİ ---
+        const SUPABASE_URL = "https://ughnrkrwjngrinemfpee.supabase.co";
+        const SUPABASE_ANON_KEY = "Sb_publishable_vda3gOyNnRmjUz_jArUnVw_98bAcuYl";
+
+        // Supabase İstemcisi Başlatılıyor
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Şifre Kontrolü
+        function checkPassword() {
+            const pass = document.getElementById('password-input').value;
+            if (pass === "12042024") {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                loadAllData();
+                startCounter();
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // Canlı Sayaç (12 Nisan 2024)
+        function startCounter() {
+            const startDate = new Date('2024-04-12T00:00:00');
+            setInterval(() => {
+                const now = new Date();
+                const diff = now - startDate;
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                document.getElementById('time-counter').innerText = 
+                    `${days} Gün ${hours} Saat ${minutes} Dakika ${seconds} Saniye`;
+            }, 1000);
+        }
+                  // --- FOTOĞRAF İŞLEMLERİ (Manuel / Yerel) ---
+        async function uploadPhotoLocally() {
+            const fileInput = document.getElementById('photo-file');
+            if (fileInput.files.length === 0) {
+                alert("Lütfen bir fotoğraf seçin!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                const base64Image = e.target.result;
+                await supabaseClient.from('photos').insert([{ url: base64Image }]);
+                fileInput.value = '';
+                loadPhotos();
+            };
+            
+            reader.readAsDataURL(file);
+        }
+
+        async function loadPhotos() {
+            const { data } = await supabaseClient.from('photos').select('*').order('created_at', { ascending: false });
+            const grid = document.getElementById('photo-grid');
+            grid.innerHTML = '';
+            
+            if (data) {
+                data.forEach(item => {
+                    const rot = (Math.random() * 6 - 3).toFixed(1);
+                    const div = document.createElement('div');
+                    div.className = 'photo-item';
+                    div.style.setProperty('--rot', rot + 'deg');
+                    div.innerHTML = `
+                        <img src="${item.url}" alt="Anı">
+                        <button class="delete-btn" onclick="deletePhoto('${item.id}')">🗑️</button>
+                    `;
+                    grid.appendChild(div);
+                });
+            }
+        }
+
+        async function deletePhoto(id) {
+            if (confirm("Bu fotoğrafı silmek istediğine emin misin?")) {
+                await supabaseClient.from('photos').delete().eq('id', id);
+                loadPhotos();
+            }
+        }
+
+        // --- NOTLAR İŞLEMLERİ ---
+        async function addNote() {
+            const text = document.getElementById('note-input').value.trim();
+            if (!text) return;
+
+            await supabaseClient.from('notes').insert([{ content: text }]);
+            document.getElementById('note-input').value = '';
+            loadNotes();
+        }
+
+        async function loadNotes() {
+            const { data } = await supabaseClient.from('notes').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('note-list');
+            list.innerHTML = '';
+            if (data) {
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${item.content}</span>
+                        <button class="item-delete-btn" onclick="deleteNote('${item.id}')">🗑️</button>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+        }
+
+        async function deleteNote(id) {
+            if (confirm("Bu notu silmek istediğine emin misin?")) {
+                await supabaseClient.from('notes').delete().eq('id', id);
+                loadNotes();
+            }
+        }
+
+        // --- SORU-CEVAP İŞLEMLERİ ---
+        async function addQA() {
+            const text = document.getElementById('qa-input').value.trim();
+            if (!text) return;
+
+            await supabaseClient.from('qa').insert([{ content: text }]);
+            document.getElementById('qa-input').value = '';
+            loadQA();
+        }
+
+        async function loadQA() {
+            const { data } = await supabaseClient.from('qa').select('*').order('created_at', { ascending: false });
+            const list = document.getElementById('qa-list');
+            list.innerHTML = '';
+            if (data) {
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${item.content}</span>
+                        <button class="item-delete-btn" onclick="deleteQA('${item.id}')">🗑️</button>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+        }
+
+        async function deleteQA(id) {
+            if (confirm("Bu içeriği silmek istediğine emin misin?")) {
+                await supabaseClient.from('qa').delete().eq('id', id);
+                loadQA();
+            }
+        }
+
+        // Tüm Verileri Yükle
+        function loadAllData() {
+            loadPhotos();
+            loadNotes();
+            loadQA();
+        }
+    </script>
+</body>
+</html>
