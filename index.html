@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Sistem Girişi - Güvenlik Kontrolü</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -18,8 +18,7 @@
             --card-bg: rgba(23, 15, 38, 0.85);
             --border-glow: rgba(139, 92, 246, 0.3);
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+                * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
         body {
             background-color: var(--bg-dark);
@@ -34,7 +33,7 @@
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s ease;
         }
-        .login-box {
+                .login-box {
             background: #1c1e24; padding: 2.5rem; border-radius: 8px;
             border: 1px solid #2d3139; width: 90%; max-width: 400px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center;
@@ -49,7 +48,7 @@
             border: 1px solid #374151; border-radius: 6px; color: #fff;
             font-size: 1rem; outline: none; text-align: center; letter-spacing: 2px;
         }
-        .login-btn {
+                .login-btn {
             width: 100%; padding: 12px; background: #374151; color: #e5e7eb;
             border: none; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
         }
@@ -67,8 +66,18 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;
         }
         .subtitle { font-size: 1.1rem; color: #d8b4fe; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; }
+                .birthdays-top-container {
+            display: flex; justify-content: center; gap: 1.5rem; max-width: 800px; margin: 1rem auto; padding: 0 1rem; flex-wrap: wrap;
+        }
+        .bday-box {
+            background: var(--card-bg); border: 1px solid var(--border-glow); padding: 0.8rem 1.2rem;
+            border-radius: 14px; backdrop-filter: blur(10px); text-align: center; flex: 1; min-width: 220px;
+        }
+        .bday-title { font-size: 0.75rem; color: var(--purple-light); margin-bottom: 0.4rem; text-transform: uppercase; }
+        .bday-timer { display: flex; justify-content: center; gap: 0.5rem; }
+        .bday-time-item { font-size: 0.9rem; color: #fff; font-family: 'Playfair Display', serif; background: rgba(139, 92, 246, 0.1); padding: 4px 8px; border-radius: 6px; }
 
-        .tabs-nav { display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; }
+        .tabs-nav { display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; }
         .tab-btn {
             background: rgba(76, 29, 149, 0.3); border: 1px solid var(--border-glow);
             color: #d8b4fe; padding: 10px 24px; border-radius: 20px; cursor: pointer;
@@ -80,8 +89,7 @@
         }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
-        .counter-container {
+                .counter-container {
             max-width: 800px; margin: 1.5rem auto; padding: 2rem;
             background: var(--card-bg); border: 1px solid var(--border-glow);
             border-radius: 20px; backdrop-filter: blur(10px); text-align: center;
@@ -95,12 +103,6 @@
         .section-header { display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1.5rem 0; border-bottom: 1px solid var(--border-glow); padding-bottom: 0.8rem; }
         .section-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #f3e8ff; display: flex; align-items: center; gap: 0.5rem; }
         
-        .add-btn {
-            background: linear-gradient(135deg, var(--purple-primary), var(--purple-deep));
-            color: #fff; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer;
-            font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
-        }
-
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; }
         .polaroid-card { background: #191224; padding: 12px 12px 20px 12px; border-radius: 12px; border: 1px solid var(--border-glow); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
         .polaroid-img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; background: #0f0814; }
@@ -117,24 +119,15 @@
         .quote-text { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #f3e8ff; line-height: 1.6; margin-bottom: 1rem; font-style: italic; }
         .quote-footer { display: flex; justify-content: flex-end; align-items: center; font-size: 0.8rem; color: var(--purple-light); }
 
-        .envelope-section { text-align: center; margin: 3rem 0; }
-        .envelope-card { background: linear-gradient(135deg, rgba(76, 29, 149, 0.4), rgba(23, 15, 38, 0.8)); border: 1px dashed var(--purple-light); padding: 2.5rem 2rem; border-radius: 20px; cursor: pointer; display: inline-block; max-width: 500px; width: 100%; }
-        .envelope-card i { font-size: 3rem; color: var(--purple-light); margin-bottom: 1rem; }
-
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }
         .modal-content { background: #191224; border: 1px solid var(--purple-light); padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; position: relative; }
         .close-modal { position: absolute; top: 15px; right: 20px; color: #a1a1aa; font-size: 1.5rem; cursor: pointer; }
-
-        .form-group { margin-bottom: 1.2rem; text-align: left; }
-        .form-group label { display: block; font-size: 0.85rem; color: var(--purple-light); margin-bottom: 0.4rem; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; background: rgba(15, 8, 20, 0.8); border: 1px solid var(--border-glow); border-radius: 8px; color: #fff; outline: none; }
-        .submit-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--purple-primary), var(--purple-deep)); border: none; border-radius: 8px; color: #fff; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
 
         .letter-box { font-family: 'Playfair Display', serif; line-height: 1.8; color: #f3e8ff; text-align: left; font-size: 1.05rem; }
         @media (max-width: 600px) { .main-title { font-size: 2.2rem; } .timer-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
-<body>
+    <body>
     <div id="lock-screen">
         <div class="login-box">
             <i class="fa-solid fa-shield-halved"></i>
@@ -149,7 +142,6 @@
             </form>
         </div>
     </div>
-
     <canvas id="canvas-bg"></canvas>
     <div id="main-content">
         <header>
@@ -157,12 +149,23 @@
             <p class="subtitle">Sonsuza Dek Birlikte</p>
         </header>
 
+        <div class="birthdays-top-container">
+            <div class="bday-box">
+                <div class="bday-title"><i class="fa-solid fa-cake-candles" style="color: #f43f5e;"></i> Caner'in Doğum Gününe</div>
+                <div class="bday-timer" id="caner-bday">0g 0s 0d 0sn</div>
+            </div>
+            <div class="bday-box">
+                <div class="bday-title"><i class="fa-solid fa-cake-candles" style="color: #f43f5e;"></i> Havin'in Doğum Gününe</div>
+                <div class="bday-timer" id="havin-bday">0g 0s 0d 0sn</div>
+            </div>
+        </div>
+
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchTab('album')"><i class="fa-solid fa-images"></i> Albümümüz</button>
             <button class="tab-btn" onclick="switchTab('quotes')"><i class="fa-solid fa-quote-left"></i> Sözlerimiz</button>
+            <button class="tab-btn" onclick="switchTab('letter')"><i class="fa-solid fa-envelope-open-text"></i> Günün Sözü</button>
         </div>
-
-        <!-- TAB 1: ALBÜM (1'den 6'ya Kadar Fotoğraflar) -->
+                <!-- TAB 1: ALBÜM -->
         <div id="tab-album" class="tab-content active">
             <div class="counter-container">
                 <div class="counter-title"><i class="fa-solid fa-heart" style="color: #f43f5e;"></i> Birlikte Geçen Süremiz</div>
@@ -180,7 +183,6 @@
                     <div class="section-title"><i class="fa-solid fa-camera-retro" style="color: #c084fc;"></i> Anı Albümü</div>
                 </div>
                 <div class="gallery-grid" id="gallery-grid">
-                    
                     <div class="polaroid-card">
                         <img src="1.png" class="polaroid-img" alt="Anı 1">
                         <div class="polaroid-caption">
@@ -189,7 +191,6 @@
                             <div class="polaroid-note">"Her şeyin başladığı o güzel an..."</div>
                         </div>
                     </div>
-
                     <div class="polaroid-card">
                         <img src="2.png" class="polaroid-img" alt="Anı 2">
                         <div class="polaroid-caption">
@@ -198,7 +199,6 @@
                             <div class="polaroid-note">"Yüzümdeki en büyük gülümsemenin sebebi..."</div>
                         </div>
                     </div>
-
                     <div class="polaroid-card">
                         <img src="3.jpg" class="polaroid-img" alt="Anı 3">
                         <div class="polaroid-caption">
@@ -207,7 +207,6 @@
                             <div class="polaroid-note">"Yan yana olunca her yer huzur..."</div>
                         </div>
                     </div>
-
                     <div class="polaroid-card">
                         <img src="4.jpg" class="polaroid-img" alt="Anı 4">
                         <div class="polaroid-caption">
@@ -216,7 +215,6 @@
                             <div class="polaroid-note">"Zamanın durmasını istediğim o kare..."</div>
                         </div>
                     </div>
-
                     <div class="polaroid-card">
                         <img src="5.jpg" class="polaroid-img" alt="Anı 5">
                         <div class="polaroid-caption">
@@ -265,12 +263,11 @@
                             <div class="polaroid-note">"Sen varken güneşe ne gerek var..."</div>
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </div>
 
-        <!-- TAB 2: SÖZLER (Edebiyat ve Doğum Günleri) -->
+        <!-- TAB 2: SÖZLER -->
         <div id="tab-quotes" class="tab-content">
             <div class="container">
                 <div class="section-header">
@@ -280,29 +277,21 @@
             </div>
         </div>
 
-        <div class="container">
-            <div class="envelope-section">
-                <div class="envelope-card" onclick="openModal('letter-modal')">
-                    <i class="fa-solid fa-envelope-open-text"></i>
-                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #f3e8ff;">Günün Sözü</h3>
-                    <p style="font-size: 0.85rem; color: #c084fc; margin-top: 0.5rem;">Okumak için tıklayabilirsin Havin 💜</p>
+        <!-- TAB 3: GÜNÜN SÖZÜ -->
+        <div id="tab-letter" class="tab-content">
+            <div class="container" style="max-width: 600px; margin-top: 3rem;">
+                <div class="modal-content" style="width: 100%; max-width: 100%; display: block;">
+                    <div class="letter-box">
+                        <h2 style="color: #c084fc; margin-bottom: 1rem; text-align: center;">Havinim,</h2>
+                        <p>Farkediyorum ki bazen sana zaman ayıramıyorum ama şunu unutma:</p>
+                        <br><p>Aklımın her köşesinde senin ismin yankılanıyor ve kalbim seninle atıyor.</p>
+                        <br><p style="text-align: right; color: #c084fc;">— Caner</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- MEKTUP MODAL -->
-    <div id="letter-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('letter-modal')">&times;</span>
-            <div class="letter-box">
-                <h2 style="color: #c084fc; margin-bottom: 1rem; text-align: center;">Havinim,</h2>
-                <p>Farkediyorum ki bazen sana zaman ayıramıyorum ama şunu unutma:</p>
-                <br><p>Aklımın her köşesinde senin ismin yankılanıyor ve kalbim seninle atıyor.</p>
-                <br><p style="text-align: right; color: #c084fc;">— Caner</p>
-            </div>
-        </div>
-    </div>
-    <script>
+            <script>
         const SECRET_PASS = "25072008";
 
         function handleLogin(e) {
@@ -333,9 +322,12 @@
             if(tabName === 'album') {
                 document.querySelector('.tabs-nav button:nth-child(1)').classList.add('active');
                 document.getElementById('tab-album').classList.add('active');
-            } else {
+            } else if(tabName === 'quotes') {
                 document.querySelector('.tabs-nav button:nth-child(2)').classList.add('active');
                 document.getElementById('tab-quotes').classList.add('active');
+            } else {
+                document.querySelector('.tabs-nav button:nth-child(3)').classList.add('active');
+                document.getElementById('tab-letter').classList.add('active');
             }
         }
 
@@ -343,27 +335,42 @@
         function updateCounter() {
             const now = new Date();
             const diff = now - startDate;
-            if (diff < 0) return;
+            if (diff >= 0) {
+                const seconds = Math.floor((diff / 1000) % 60);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 365);
+                const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
 
-            const seconds = Math.floor((diff / 1000) % 60);
-            const minutes = Math.floor((diff / 1000 / 60) % 60);
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 365);
-            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+                document.getElementById('years').innerText = years;
+                document.getElementById('days').innerText = days;
+                document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+                document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+                document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+            }
 
-            document.getElementById('years').innerText = years;
-            document.getElementById('days').innerText = days;
-            document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
-            document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
-            document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+            // Doğum günleri sayaçları (Caner ve Havin için örnek tarihler ayarlanabilir, şu an örnek olarak 1 Ocak ve 14 Şubat verilmiştir)
+            updateBirthdayCountdown('caner-bday', new Date(now.getFullYear(), 6, 25)); // Örn: Caner
+            updateBirthdayCountdown('havin-bday', new Date(now.getFullYear(), 4, 15)); // Örn: Havin
         }
+
+        function updateBirthdayCountdown(elementId, bdayDate) {
+            const now = new Date();
+            if (now > bdayDate) {
+                bdayDate.setFullYear(bdayDate.getFullYear() + 1);
+            }
+            const diff = bdayDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById(elementId).innerText = `${days}g ${hours}s ${minutes}d ${seconds}sn`;
+        }
+
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        // Yazar ve Şairlerden Seçkin, Romantik Sözler ve Doğum Günleri
         function loadQuotes() {
             const grid = document.getElementById('quotes-grid');
             grid.innerHTML = '';
@@ -474,3 +481,4 @@
     </script>
 </body>
 </html>
+
