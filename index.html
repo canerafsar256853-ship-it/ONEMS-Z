@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onaylı Üyelik Sistemi</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #121316; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: #1c1e24; padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; border: 1px solid #2d3139; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { margin-bottom: 1rem; color: #c084fc; font-size: 1.4rem; }
+        p { font-size: 0.85rem; color: #9ca3af; margin-bottom: 1.5rem; }
+        input { width: 100%; padding: 12px; margin: 8px 0; background: #0f0814; border: 1px solid #374151; border-radius: 6px; color: #fff; outline: none; }
+        button { width: 100%; padding: 12px; margin-top: 10px; background: #8b5cf6; border: none; border-radius: 6px; color: #fff; cursor: pointer; font-weight: 600; transition: background 0.3s; }
+        button:hover { background: #7c3aed; }
+        .switch-link { margin-top: 15px; font-size: 0.85rem; color: #9ca3af; cursor: pointer; }
+        .switch-link span { color: #c084fc; text-decoration: underline; }
+        .msg { margin-top: 12px; font-size: 0.85rem; }
+        .error { color: #ef4444; }
+        .success { color: #10b981; }
+        .pending { color: #f59e0b; }
+        #app-content { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- GİRİŞ VE KAYIT KARTI -->
+    <div class="card" id="auth-card">
+        
+        <!-- Kayıt Formu -->
+        <div id="register-box">
+            <h2>Üyelik Talebi</h2>
+            <p>Siteye erişmek için kayıt talebi gönderin.</p>
+            
+            <form id="reg-form" action="https://formspree.io/f/xwllwjdr" method="POST" onsubmit="handleRegister(event)">
+                <input type="text" name="name" id="reg-name" placeholder="Adınız" required>
+                <input type="email" name="email" id="reg-email" placeholder="E-Posta Adresiniz" required>
+                <input type="password" name="password" id="reg-pass" placeholder="Şifreniz" required>
+                <button type="submit">Kayıt Talebi Gönder</button>
+            </form>
+            
+            <div class="switch-link" onclick="toggleAuth('login')">Zaten hesabın var mı? <span>Giriş Yap</span></div>
+        </div>
+
+        <!-- Giriş Formu -->
+        <div id="login-box" style="display: none;">
+            <h2>Sisteme Giriş</h2>
+            <p>Hesabınızın onay durumunu kontrol edin.</p>
+            <input type="email" id="login-email" placeholder="E-Posta Adresiniz">
+            <input type="password" id="login-pass" placeholder="Şifreniz">
+            <button onclick="checkStatus()">Giriş Yap ve Durumu Kontrol Et</button>
+            <div class="switch-link" onclick="toggleAuth('register')">Hesabın yok mu? <span>Talep Oluştur</span></div>
+        </div>
+
+        <div id="msg" class="msg"></div>
+    </div>
+
+    <!-- ONAYLANANLARIN GÖRECEĞİ ALAN -->
+    <div class="card" id="app-content">
+        <h2 style="color: #10b981;">🎉 ONAYLANDI!</h2>
+        <p>Yönetici onayından geçtiniz, sisteme hoş geldiniz.</p>
+        <button onclick="logout()" style="background: #ef4444;">Çıkış Yap</button>
+    </div>
+
+    <script>
+        // ONAYLANMIŞ KİŞİLERİN LİSTESİ (Sen onayladıkça bu listeye e-posta ekleyebilirsin)
+        const approvedEmails = [
+            "havin@example.com", // Örnek onaylı e-posta
+            "canerafsar256853@gmail.com"
+        ];
+
+        function toggleAuth(type) {
+            document.getElementById('msg').innerText = '';
+            if(type === 'login') {
+                document.getElementById('register-box').style.display = 'none';
+                document.getElementById('login-box').style.display = 'block';
+            } else {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('register-box').style.display = 'block';
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            const form = event.target;
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const msg = document.getElementById('msg');
+
+            const formData = new FormData(form);
+            try {
+                let response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    msg.className = "msg pending";
+                    msg.innerText = "Talebiniz Caner'e iletildi! Mail bildirimi gönderildi.";
+                    form.reset();
+                } else {
+                    msg.className = "msg error";
+                    msg.innerText = "Talep gönderilemedi, lütfen tekrar deneyin.";
+                }
+            } catch (error) {
+                msg.className = "msg error";
+                msg.innerText = "Bir hata oluştu!";
+            }
+        }
+
+        // Giriş yapıldığında onay listesini kontrol eder
+        function checkStatus() {
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const pass = document.getElementById('login-pass').value;
+            const msg = document.getElementById('msg');
+
+            if(!email || !pass) {
+                msg.className = "msg error";
+                msg.innerText = "Lütfen alanları doldurun!";
+                return;
+            }
+
+            // E-posta onaylılar listesinde mi kontrol et
+            if (approvedEmails.includes(email)) {
+                // Onaylanmışsa içeriği aç
+                document.getElementById('auth-card').style.display = 'none';
+                document.getElementById('app-content').style.display = 'block';
+            } else {
+                // Henüz onaylanmamışsa beklemede uyarısı ver
+                msg.className = "msg pending";
+                msg.innerText = "⏳ Hesap talebiniz inceleniyor, henüz ONAYLANMADI.";
+            }
+        }
+
+        function logout() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
