@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Sistem Girişi - Güvenlik Kontrolü</title>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0f0814;
+            --purple-primary: #8b5cf6;
+            --purple-deep: #4c1d95;
+            --purple-light: #c084fc;
+            --accent-pink: #f43f5e;
+            --text-light: #f3e8ff;
+            --card-bg: rgba(23, 15, 38, 0.85);
+            --border-glow: rgba(139, 92, 246, 0.3);
+        }
+              * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #121316; color: #a0a5b1;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+              .login-box {
+            background: #1c1e24; padding: 2.5rem; border-radius: 8px;
+            border: 1px solid #2d3139; width: 90%; max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center;
+        }
+        .login-box i { font-size: 2.5rem; color: #6b7280; margin-bottom: 1rem; }
+        .login-box h2 { font-size: 1.2rem; font-weight: 500; color: #e5e7eb; margin-bottom: 0.5rem; }
+        .login-box p { font-size: 0.85rem; color: #6b7280; margin-bottom: 1.5rem; }
+
+        .input-group { position: relative; margin-bottom: 1.2rem; }
+        .input-group input {
+            width: 100%; padding: 12px 15px; background: #121316;
+            border: 1px solid #374151; border-radius: 6px; color: #fff;
+            font-size: 1rem; outline: none; text-align: center; letter-spacing: 2px;
+        }
+              .login-btn {
+            width: 100%; padding: 12px; background: #374151; color: #e5e7eb;
+            border: none; border-radius: 6px; font-size: 0.95rem; cursor: pointer;
+        }
+        .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 0.8rem; display: none; }
+
+        #main-content {
+            opacity: 0; visibility: hidden; transition: opacity 1.2s ease;
+            position: relative; z-index: 1; padding-bottom: 4rem;
+        }
+        #canvas-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        header { text-align: center; padding: 3rem 1rem 1rem 1rem; position: relative; }
+        .main-title {
+            font-family: 'Playfair Display', serif; font-size: 3rem;
+            background: linear-gradient(135deg, #f3e8ff, #c084fc, #e879f9);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem;
+        }
+        .subtitle { font-size: 1.1rem; color: #d8b4fe; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; }
+              .birthdays-top-container {
+            display: flex; justify-content: center; gap: 1.5rem; max-width: 800px; margin: 1rem auto; padding: 0 1rem; flex-wrap: wrap;
+        }
+        .bday-box {
+            background: var(--card-bg); border: 1px solid var(--border-glow); padding: 0.8rem 1.2rem;
+            border-radius: 14px; backdrop-filter: blur(10px); text-align: center; flex: 1; min-width: 220px;
+        }
+        .bday-title { font-size: 0.75rem; color: var(--purple-light); margin-bottom: 0.4rem; text-transform: uppercase; }
+        .bday-timer { display: flex; justify-content: center; gap: 0.5rem; }
+        .bday-time-item { font-size: 0.9rem; color: #fff; font-family: 'Playfair Display', serif; background: rgba(139, 92, 246, 0.1); padding: 4px 8px; border-radius: 6px; }
+
+        .tabs-nav { display: flex; justify-content: center; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; }
+        .tab-btn {
+            background: rgba(76, 29, 149, 0.3); border: 1px solid var(--border-glow);
+            color: #d8b4fe; padding: 10px 24px; border-radius: 20px; cursor: pointer;
+            font-size: 1rem; transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .tab-btn.active, .tab-btn:hover {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-deep));
+            color: #fff; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+              .container { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1.5rem 0; border-bottom: 1px solid var(--border-glow); padding-bottom: 0.8rem; }
+        .section-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #f3e8ff; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2rem; }
+        .polaroid-card { background: #191224; padding: 12px 12px 20px 12px; border-radius: 12px; border: 1px solid var(--border-glow); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+        .polaroid-img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; background: #0f0814; }
+        .polaroid-caption { margin-top: 12px; text-align: center; }
+        .polaroid-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #f3e8ff; margin-bottom: 4px; }
+        .polaroid-date { font-size: 0.75rem; color: var(--purple-light); margin-bottom: 6px; }
+        .polaroid-note { font-size: 0.85rem; color: #d1d5db; font-style: italic; }
+
+        .quotes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .quote-card {
+            background: #191224; border: 1px solid var(--border-glow); padding: 1.5rem;
+            border-radius: 14px; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .quote-text { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: #f3e8ff; line-height: 1.6; margin-bottom: 1rem; font-style: italic; }
+        .quote-footer { display: flex; justify-content: flex-end; align-items: center; font-size: 0.8rem; color: var(--purple-light); }
+
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; }
+        .modal-content { background: #191224; border: 1px solid var(--purple-light); padding: 2rem; border-radius: 16px; width: 90%; max-width: 500px; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 20px; color: #a1a1aa; font-size: 1.5rem; cursor: pointer; }
+
+        .letter-box { font-family: 'Playfair Display', serif; line-height: 1.8; color: #f3e8ff; text-align: left; font-size: 1.05rem; }
+        @media (max-width: 600px) { .main-title { font-size: 2.2rem; } }
+    </style>
+</head>
+<body>
+    <div id="lock-screen">
+        <div class="login-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h2>GÜVENLİK KONTROLÜ</h2>
+            <p>Devam etmek için erişim kodunu giriniz.</p>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <input type="password" id="password-input" placeholder="••••••••" required autocomplete="off">
+                </div>
+                <button type="submit" class="login-btn">Sisteme Giriş Yap</button>
+                <div id="error-msg" class="error-msg">Geçersiz erişim kodu!</div>
+            </form>
+        </div>
+    </div>
+    <canvas id="canvas-bg"></canvas>
+    <div id="main-content">
+        <header>
+            <h1 class="main-title">Caner & Havin</h1>
+            <p class="subtitle">Sonsuza Dek Birlikte</p>
+        </header>
+
+        <div class="birthdays-top-container">
+            <div class="bday-box">
+                <div class="bday-title"><i class="fa-solid fa-heart" style="color: #f43f5e;"></i> Birlikte Geçen Süremiz</div>
+                <div class="bday-timer" id="relationship-timer">0g 0s 0d 0sn</div>
+            </div>
+            <div class="bday-box">
+                <div class="bday-title"><i class="fa-solid fa-cake-candles" style="color: #f43f5e;"></i> Caner'in Doğum Gününe</div>
+                <div class="bday-timer" id="caner-bday">0g 0s 0d 0sn</div>
+            </div>
+            <div class="bday-box">
+                <div class="bday-title"><i class="fa-solid fa-cake-candles" style="color: #f43f5e;"></i> Havin'in Doğum Gününe</div>
+                <div class="bday-timer" id="havin-bday">0g 0s 0d 0sn</div>
+            </div>
+        </div>
+
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('album')"><i class="fa-solid fa-images"></i> Albümümüz</button>
+            <button class="tab-btn" onclick="switchTab('quotes')"><i class="fa-solid fa-quote-left"></i> Sözlerimiz</button>
+            <button class="tab-btn" onclick="switchTab('letter')"><i class="fa-solid fa-envelope-open-text"></i> Günün Sözü</button>
+        </div>
+                <!-- TAB 1: ALBÜM -->
+        <div id="tab-album" class="tab-content active">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-title"><i class="fa-solid fa-camera-retro" style="color: #c084fc;"></i> Anı Albümü</div>
+                </div>
+                <div class="gallery-grid" id="gallery-grid">
+                    <div class="polaroid-card">
+                        <img src="1.png" class="polaroid-img" alt="Anı 1">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">İlk Bakış</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Her şeyin başladığı o güzel an..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="2.png" class="polaroid-img" alt="Anı 2">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">En Tatlı Gülüşün</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Yüzümdeki en büyük gülümsemenin sebebi..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="3.jpg" class="polaroid-img" alt="Anı 3">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Birlikte Güzeliz</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Yan yana olunca her yer huzur..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="4.jpg" class="polaroid-img" alt="Anı 4">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Unutulmaz Hatıra</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Zamanın durmasını istediğim o kare..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="5.jpg" class="polaroid-img" alt="Anı 5">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Kalbimin Sahibi</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"İyi ki yollarımız kesişmiş..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="7.jpg" class="polaroid-img" alt="Anı 7">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Kalbimin Sahibi</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Hayat senleyken güzel..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="6.jpg" class="polaroid-img" alt="Anı 6">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Sonsuza Dek</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Geleceğe attığımız en güzel adım..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="8.jpg" class="polaroid-img" alt="Anı 8">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Vuduuuu</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Bu güzellik fazla..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="9.jpg" class="polaroid-img" alt="Anı 9">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Vuduuuu</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Sen varken güneşe ne gerek var..."</div>
+                        </div>
+                    </div>
+                    <div class="polaroid-card">
+                        <img src="10.jpg" class="polaroid-img" alt="Anı 10">
+                        <div class="polaroid-caption">
+                            <div class="polaroid-title">Vuduuuu</div>
+                            <div class="polaroid-date">Özel An</div>
+                            <div class="polaroid-note">"Sen varken güneşe ne gerek var..."</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: SÖZLER -->
+        <div id="tab-quotes" class="tab-content">
+            <div class="container">
+                <div class="section-header">
+                    <div class="section-title"><i class="fa-solid fa-feather" style="color: #c084fc;"></i> Kalpten Sözler & Şairler</div>
+                </div>
+                <div class="quotes-grid" id="quotes-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: GÜNÜN SÖZÜ -->
+        <div id="tab-letter" class="tab-content">
+            <div class="container" style="max-width: 600px; margin-top: 3rem;">
+                <div class="modal-content" style="width: 100%; max-width: 100%; display: block;">
+                    <div class="letter-box">
+                        <h2 style="color: #c084fc; margin-bottom: 1rem; text-align: center;">Havinim,</h2>
+                        <p>Farkediyorum ki bazen sana zaman ayıramıyorum ama şunu unutma:</p>
+                        <br><p>Aklımın her köşesinde senin ismin yankılanıyor ve kalbim seninle atıyor.</p>
+                        <br><p style="text-align: right; color: #c084fc;">— Caner</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <script>
+        const SECRET_PASS = "25072008";
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            const lockScreen = document.getElementById('lock-screen');
+            const mainContent = document.getElementById('main-content');
+
+            if (pass === SECRET_PASS) {
+                lockScreen.style.opacity = '0';
+                setTimeout(() => {
+                    lockScreen.style.visibility = 'hidden';
+                    mainContent.style.visibility = 'visible';
+                    mainContent.style.opacity = '1';
+                    initParticles();
+                    loadQuotes();
+                }, 800);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if(tabName === 'album') {
+                document.querySelector('.tabs-nav button:nth-child(1)').classList.add('active');
+                document.getElementById('tab-album').classList.add('active');
+            } else if(tabName === 'quotes') {
+                document.querySelector('.tabs-nav button:nth-child(2)').classList.add('active');
+                document.getElementById('tab-quotes').classList.add('active');
+            } else {
+                document.querySelector('.tabs-nav button:nth-child(3)').classList.add('active');
+                document.getElementById('tab-letter').classList.add('active');
+            }
+        }
+
+        const startDate = new Date(2026, 10, 2, 19, 13, 0);
+        function updateCounter() {
+            const now = new Date();
+            
+            // Birlikte geçen süre sayacı
+            const diffRel = now - startDate;
+            if (diffRel >= 0) {
+                const seconds = Math.floor((diffRel / 1000) % 60);
+                const minutes = Math.floor((diffRel / 1000 / 60) % 60);
+                const hours = Math.floor((diffRel / (1000 * 60 * 60)) % 24);
+                const days = Math.floor((diffRel / (1000 * 60 * 60 * 24)) % 365);
+                const years = Math.floor(diffRel / (1000 * 60 * 60 * 24 * 365));
+                
+                let relText = "";
+                if (years > 0) relText += `${years}y `;
+                relText += `${days}g ${hours}s ${minutes}d ${seconds}sn`;
+                document.getElementById('relationship-timer').innerText = relText;
+            }
+
+            // Doğum günleri sayaçları
+            updateBirthdayCountdown('caner-bday', new Date(now.getFullYear(), 6, 25)); 
+            updateBirthdayCountdown('havin-bday', new Date(now.getFullYear(), 4, 15)); 
+        }
+
+        function updateBirthdayCountdown(elementId, bdayDate) {
+            const now = new Date();
+            if (now > bdayDate) {
+                bdayDate.setFullYear(bdayDate.getFullYear() + 1);
+            }
+            const diff = bdayDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById(elementId).innerText = `${days}g ${hours}s ${minutes}d ${seconds}sn`;
+        }
+
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        function loadQuotes() {
+            const grid = document.getElementById('quotes-grid');
+            grid.innerHTML = '';
+            
+            const romanticQuotes = [
+                { text: "Seni severken dünyayı unuttum; çünkü sen dünyam oldun.", author: "Özdemir Asaf" },
+                { text: "Seni düşünmek güzel şey, ümitli şey, dünyanın en güzel sesini, en güzel şarkısını dinlemek gibi bir şey... Fakat artık ümit yetmiyor bana, ben şarkı dinlemek değil, şarkı söylemek istiyorum.", author: "Nazım Hikmet" },
+                { text: "Aşk, iki yalnızlığın birbirini sınaması, sarılması ve anlaşmasıdır.", author: "Rainer Maria Rilke" },
+                { text: "Göğsümde kopan fırtınaların sığınağı sensin; sen uzaktayken bile yanımda olan sessiz bir limansın.", author: "Ahmet Hamdi Tanpınar" },
+                { text: "Ne hasta bekler sabahı, ne taze ölüyü mezar, ne de şeytan günahı, seni beklediğim kadar.", author: "Necip Fazıl Kısakürek" },
+                { text: "Aşk bir deniz, kadın o denizde bir gemi, erkek ise o geminin dümenindeki dilsir kaptandır.", author: "Sabahattin Ali" },
+                { text: "Beni öyle bir yalancı sonbaharla vur ki, yapraklarım dökülsün, köklerim seninle kalsın.", author: "Atilla İlhan" },
+                { text: "Gözlerin, karanlık bir gecede denize dökülen yakamozlar gibi aydınlatıyor içimdeki en kör noktaları.", author: "Cemal Süreya" },
+                { text: "Denizleri seviyorsan dalgaları da seveceksin, uçulmasını istiyorsan düşmeyi de bileceksin. Aşkta tasaya katlanmak, gülü dikeniyle kucaklamaktır.", author: "Mevlana" },
+                { text: "Sen benim en güzel şiirimin bitmeyen mısrası, içimde hiç sönmeyen o gizli ateşsin.", author: "Özdemir Asaf" },
+                { text: "İkimiz de aynı gökyüzünün altında, farklı aynalarda kendi yüzümüzü değil, birbirimizi arıyoruz.", author: "Orhan Veli Kanık" },
+                { text: "Aşk, ruhun gövdeye duyduğu hayranlık ve iki tenin biricik lisanıdır.", author: "Ahmet Haşim" },
+                { text: "Sen benim sarhoşluğumsun, ne ayıktım ne de ayılmak isterim bu rüya gibi sevgiden.", author: "Ömer Hayyam" },
+                { text: "Bir kadın sokağın ortasında ağlarsa, bütün şehir o gece yarısı üşür; sen ağlama ki, sokaklarımız bahar kalsın.", author: "Cahit Sıtkı Tarancı" },
+                { text: "Seni sevmek, karanlık bir odada mavi bir gökyüzü bulmak gibi imkansız ama bir o kadar da mucizevi.", author: "Edip Cansever" },
+                { text: "Bütün medeniyetler yıkılır, bütün saraylar kumdan ibarettir; geriye sadece iki insanın birbirine tuttuğu o incecik eller kalır.", author: "Peyami Safa" },
+                { text: "Gönlümün derinlerindeki kuytu ormanda yankılanan tek ses senin adındır.", author: "Turgut Uyar" },
+                { text: "Aşk, iki kalbin aynı ritimle çarparken dünyayı unuttuğu sessiz bir ayin gibidir.", author: "Şeyh Galip" },
+                { text: "Sensiz geçen her an, ömrümün bahçesine düşen zamansız ve acımasız bir kırağı gibidir.", author: "Yahya Kemal Beyatlı" },
+                { text: "Gözlerinin yeşilinde kaybolan bir gemi gibiyim; ne limana dönebilen var ne de batmaktan korkan.", author: "Ahmet Telli" },
+                { text: "Aşk, insanın içindeki en derin boşluğu dolduran, rüzgarda savrulan bir yaprağın toprağa kavuşmasıdır.", author: "Fuzuli" },
+                { text: "Yüzünün her çizgisi, kaderimin defterine kendi ellerimle çizdiğim en harika coğrafyadır.", author: "Cahit Zarifoğlu" },
+                { text: "Sen benim hayatımın hem en güzel başlangıcı hem de sonsuzluğa uzanan tek yolumsun.", author: "Ümit Yaşar Oğuzcan" },
+                { text: "Bir cümlenin ortasında soluksuz kalmak gibidir seni düşünmek; hem boğucu hem de hayati.", author: "Küçük İskender" },
+                { text: "Aşk, iki ruhun birbirine ayna tuttuğu ve kusurlarını bile sevgiyle kucakladığı mucizedir.", author: "Şems-i Tebrizi" },
+                { text: "Gecenin sükunetinde, uzaktan uzağa çalan bir ney sesi gibi içimi sızlatır yokluğun.", author: "Necatigil" },
+                { text: "Seninle olmak, fırtınalı bir denizde pusulasız kalmak ama yine de en güvenli limanı bulmuş gibi hissetmektir.", author: "Attila İlhan" },
+                { text: "Bütün kelimeler bittiğinde, gözlerinle konuşmaya başlar kalbim.", author: "Özdemir Asaf" },
+                { text: "Aşk, karanlık bir gecede parlayan kutup yıldızı gibidir; yönünü kaybeden ruhların tek sığınağı.", author: "Cemal Süreya" },
+                { text: "Ruhumun en kuytu köşesinde yaktığın meşale, rüzgarlara boyun eğmeyecek kadar güçlü.", author: "Ahmet Hamdi Tanpınar" },
+                { text: "Seninle geçen her gün, ömrümün tarlasında yeşeren en nadide çiçek gibidir.", author: "Sabahattin Ali" },
+                { text: "Gözlerinin derinliklerinde boğulmak, bu dünyada tadabileceğim en tatlı felakettir.", author: "Orhan Veli Kanık" },
+                { text: "Aşk, zamana meydan okuyan ve iki ayrı insanı tek bir nefes kılan gizemli bir köprüdür.", author: "Mevlana" },
+                { text: "Kalbinin kapısını çaldığım o an, bütün hayatımın rüyadan gerçeğe döndüğü andı.", author: "Peyami Safa" },
+                { text: "Sen benim içimdeki solmayan bahar, ömrümün en inatçı ve güzel umudusun.", author: "Nazım Hikmet" },
+                { text: "Bir tebessümünle aydınlanır içimdeki bütün o karanlık ve metruk sokaklar.", author: "Turgut Uyar" },
+                { text: "Aşk, iki insanın birbirinin yaralarını sararken kendi yaralarını unutması sanatıdır.", author: "Rainer Maria Rilke" },
+                { text: "Gönlümün tahtına kurulan sultanım, seninle başlayan her gün yeniden doğmaktır.", author: "Fuzuli" },
+                { text: "Seni sevmek, gökyüzündeki yıldızları teker teker toplayıp kendi ellerimle tacını örmektir.", author: "Ümit Yaşar Oğuzcan" },
+                { text: "Rüzgarın saçlarına değdiği her an, evrenin en güzel şarkısını fısıldar bana.", author: "Ahmet Haşim" },
+                { text: "Aşk, kelimelerin bittiği yerde baslayan ve sadece kalplerin konuştuğu dilsiz bir dildir.", author: "Şems-i Tebrizi" },
+                { text: "Seninle susabilmek, dünyadaki bütün gürültülü yalanlardan kaçıp sığındığım en güvenli mabedim.", author: "Edip Cansever" },
+                { text: "Gözlerinin renginde saklıdır bütün mavi umutlarım, oradan başka gidecek yerim yok.", author: "Cahit Sıtkı Tarancı" },
+                { text: "Aşk, bir ömrü başka bir ömürde yeniden yazma cesaretini göstermektir.", author: "Ömer Hayyam" },
+                { text: "Sensizlik, ruhumun üzerine çöken kış uykusu; seninle olmak ise yeniden uyanan doğa gibidir.", author: "Yahya Kemal Beyatlı" },
+                { text: "Gönlümün derin denizinde dalgalanan tek rüzgar, senin varlığındır.", author: "Ahmet Telli" },
+                { text: "Aşk, iki yabancının kaderin ellerinde kusursuz bir uyumla birbirine sarılmasıdır.", author: "Necip Fazıl Kısakürek" },
+                { text: "Yıldızların kaybolduğu vakitte bile senin ışığınla yolumu bulurum karanlıklarda.", author: "Cahit Zarifoğlu" },
+                { text: "Sen benim hayatımın en tatlı tesadüfü, en inatçı ve güzel kaderimsin.", author: "Küçük İskender" },
+                { text: "Aşk, kalbin en derin kuyusundan çıkarılan ve ömür boyu taşınan en değerli hazinedir.", author: "Şeyh Galip" },
+                { text: "Seninle her an, zamanın ötesinde ve mekanın haricinde yaşanan sonsuz bir rüyadır.", author: "Atilla İlhan" },
+                { text: "Gözlerinin kahvesi ömrüme fincan kahve, seninle geçen her anıma huzur katıyor.", author: "Cemal Süreya" },
+                { text: "Ölüm ölüm dediğin nedir ki be gülüm ben senin için yaşamayı göze almışım", author: "Caner AFŞAR" },
+                { text: "Sen benim aldığım nefes, içimdeki en güzel ezgisin.", author: "Nazım Hikmet" },
+                { text: "Aşk, iki kişinin tek bir ruh ve kalp olarak dünyaya meydan okumasıdır.", author: "Ahmet Telli" },
+                { text: "Seninle her şey güzel, seninle hayat bir başka anlam taşıyor.", author: "Caner & Havin" }
+            ];
+
+            romanticQuotes.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'quote-card';
+                card.innerHTML = `
+                    <div class="quote-text">"${q.text}"</div>
+                    <div class="quote-footer"><span>— ${q.author}</span></div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('canvas-bg');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            for(let i = 0; i < 40; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 3 + 1,
+                    alpha: Math.random() * 0.5 + 0.2,
+                    speedY: Math.random() * 0.5 + 0.2
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(192, 132, 252, ${p.alpha})`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = "#c084fc";
+                    ctx.fill();
+                    p.y -= p.speedY;
+                    if(p.y < 0) p.y = canvas.height;
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+    </script>
+</body>
+</html>
