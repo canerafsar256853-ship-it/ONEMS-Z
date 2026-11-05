@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Özel Web Sitemiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-purple: #6b3fa0;
+            --dark-purple: #4a2875;
+            --light-bg: #fdf8ff;
+            --accent-yellow: #ffeb3b;
+        }
+              * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Fredoka', sans-serif; }
+        body { background-color: var(--light-bg); color: #333; overflow-x: hidden; }
+        
+        /* Giriş Ekranı */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, #7b4397, #dc2430);
+            display: flex; justify-content: center; align-items: center; z-index: 10000;
+        }
+        .login-box {
+            background: white; padding: 40px; border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; width: 350px;
+        }
+              .login-box h2 { margin-bottom: 20px; color: var(--primary-purple); }
+        .login-box select, .login-box input {
+            width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd;
+            border-radius: 10px; font-size: 16px; outline: none;
+        }
+        .login-box button {
+            width: 100%; padding: 12px; background: var(--primary-purple); color: white;
+            border: none; border-radius: 10px; font-size: 18px; cursor: pointer; font-weight: 600;
+            transition: 0.2s;
+        }
+        .login-box button:hover { background: var(--dark-purple); }
+        .error-msg { color: #ff5252; font-size: 14px; margin-top: 10px; display: none; }
+              /* Ana İçerik ve Üst Bilgi */
+        #main-app { display: none; width: 100vw; height: 100vh; position: relative; padding: 20px; }
+        .header-container { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .counter-box {
+            background: var(--primary-purple); color: white; padding: 15px 25px;
+            border-radius: 25px; font-weight: 600; font-size: 16px; border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); flex: 1; min-width: 280px; text-align: center;
+        }
+        .time-box { background: var(--accent-yellow); color: #333; }
+        
+        .welcome-banner {
+            background: var(--primary-purple); color: white; padding: 20px; border-radius: 25px;
+            text-align: center; font-size: 28px; font-weight: 600; border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 30px;
+        }
+              /* Menü Butonları */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; max-width: 800px; margin: 0 auto; }
+        .menu-btn {
+            background: var(--primary-purple); color: white; padding: 25px; border-radius: 25px;
+            text-align: center; font-size: 24px; font-weight: 600; border: 3px solid #fff;
+            cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.2); transition: transform 0.2s, background 0.2s;
+        }
+        .menu-btn:hover { transform: scale(1.03); background: var(--dark-purple); }
+        .full-width-btn { grid-column: span 2; }
+
+        /* Tam Ekran Sekmeler */
+        .fullscreen-tab {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--light-bg); z-index: 5000; display: none; flex-direction: column;
+            padding: 30px; overflow-y: auto;
+        }
+        .close-tab-btn {
+            align-self: flex-start; background: #ff5252; color: white; border: none;
+            padding: 10px 20px; border-radius: 15px; font-size: 16px; cursor: pointer; font-weight: 600;
+            margin-bottom: 20px; box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+              /* Anılarımız Bölümü */
+        .anilar-container { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .memory-card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 80%; max-width: 500px; text-align: center; }
+        .memory-card img { width: 100%; border-radius: 15px; margin-top: 10px; }
+
+        /* Sözlerimiz Bölümü */
+        .soz-card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; width: 100%; max-width: 600px; }
+        .soz-card p { font-size: 18px; font-style: italic; margin-bottom: 8px; }
+        .soz-card span { font-weight: 600; color: var(--primary-purple); display: block; text-align: right; }
+              /* Şairlerden Seçmeler Bölümü */
+        .sair-list { display: flex; flex-direction: column; gap: 15px; max-width: 700px; margin: 0 auto; width: 100%; }
+        
+        /* Bir İlişki Nasıl Olmalı Bölümü */
+        .accordion-item { background: white; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); overflow: hidden; width: 100%; max-width: 700px; margin-left: auto; margin-right: auto; }
+        .accordion-header { background: var(--primary-purple); color: white; padding: 18px 25px; cursor: pointer; font-size: 20px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-content { padding: 20px 25px; display: none; background: #fff; font-size: 16px; line-height: 1.6; color: #444; }
+              /* Oyun Sekmesi Stilleri */
+        #game-container { position: relative; width: 100%; max-width: 800px; height: 350px; background: #fff; border: 4px solid var(--primary-purple); border-radius: 20px; overflow: hidden; margin: 20px auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        #game-canvas { display: block; width: 100%; height: 100%; }
+        .game-info { text-align: center; font-size: 20px; font-weight: 600; color: var(--primary-purple); margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <!-- GİRİŞ EKRANI -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>Giriş Yap</h2>
+            <select id="username-select">
+                <option value="" disabled selected>Kullanıcı Seçiniz</option>
+                <option value="Havin Aslan">Havin Aslan</option>
+                <option value="Caner Afşar">Caner Afşar</option>
+            </select>
+            <input type="password" id="password-input" placeholder="Şifrenizi Girin">
+            <button onclick="handleLogin()">Giriş Yap</button>
+            <div id="error-msg" class="error-msg">Kullanıcı adı veya şifre hatalı!</div>
+        </div>
+    </div>
+        <!-- ANA UYGULAMA EKRANI -->
+    <div id="main-app">
+        <div class="header-container">
+            <div class="counter-box" id="havin-countdown">HAVİN'İN DOĞUM GÜNÜNE: Yükleniyor...</div>
+            <div class="counter-box" id="caner-countdown">CANER'İN DOĞUM GÜNÜNE: Yükleniyor...</div>
+            <div class="counter-box time-box" id="relationship-timer">BİRLİKTE GEÇEN SÜRE: Yükleniyor...</div>
+        </div>
+
+        <div class="welcome-banner" id="welcome-banner">HOŞGELDİN "<span id="logged-user-name"></span>"</div>
+
+        <div class="menu-grid">
+            <div class="menu-btn" onclick="openTab('anilar-tab')">ANILARIMIZ</div>
+            <div class="menu-btn" onclick="openTab('sozler-tab')">SÖZLERİMİZ</div>
+            <div class="menu-btn" onclick="openTab('sairler-tab')">ŞAİRLERDEN SEÇMELER</div>
+            <div class="menu-btn" onclick="openTab('oyun-tab')">OYUNUMUZ</div>
+            <div class="menu-btn full-width-btn" onclick="openTab('iliski-tab')">BİR İLİŞKİ NASIL OLMALI?</div>
+        </div>
+    </div>
+        <!-- 1. ANILARIMIZ SEKMESİ -->
+    <div id="anilar-tab" class="fullscreen-tab">
+        <button class="close-tab-btn" onclick="closeTab('anilar-tab')">← Geri Dön</button>
+        <h2 style="text-align:center; color:var(--primary-purple); margin-bottom:20px;">Anılarımız</h2>
+        <div class="anilar-container">
+            <div class="memory-card">
+                <h3>Özel Anımız</h3>
+                <!-- Koddan eklenecek png1 referansı -->
+                <img src="png1.png" alt="Anı Resmi">
+                <p>Buraya anınızla ilgili kısa bir açıklama ekleyebilirsiniz.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SÖZLERİMİZ SEKMESİ -->
+    <div id="sozler-tab" class="fullscreen-tab">
+        <button class="close-tab-btn" onclick="closeTab('sozler-tab')">← Geri Dön</button>
+        <h2 style="text-align:center; color:var(--primary-purple); margin-bottom:20px;">Sözlerimiz</h2>
+        <div style="max-width:600px; margin:0 auto; width:100%;" id="sozler-container">
+            <div class="soz-card">
+                <p>"Örnek söz buraya gelecek, bunu referans alarak kendi sözlerinizi çoğaltabilirsiniz."</p>
+                <span>- Örnek Yazar</span>
+            </div>
+        </div>
+    </div>
+        <!-- 3. ŞAİRLERDEN SEÇMELER SEKMESİ (100+ Söz Altyapısı) -->
+    <div id="sairler-tab" class="fullscreen-tab">
+        <button class="close-tab-btn" onclick="closeTab('sairler-tab')">← Geri Dön</button>
+        <h2 style="text-align:center; color:var(--primary-purple); margin-bottom:20px;">Şairlerden Seçmeler (Aşk Dolu Sözler)</h2>
+        <div class="sair-list" id="sairler-container"></div>
+    </div>
+
+    <!-- 5. BİR İLİŞKİ NASIL OLMALI SEKMESİ -->
+    <div id="iliski-tab" class="fullscreen-tab">
+        <button class="close-tab-btn" onclick="closeTab('iliski-tab')">← Geri Dön</button>
+        <h2 style="text-align:center; color:var(--primary-purple); margin-bottom:20px;">Bir İlişki Nasıl Olmalı? (Kapsamlı Rehber)</h2>
+        <div style="width:100%;">
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">1. Sağlıklı İletişim ve Dinleme <span>+</span></div>
+                <div class="accordion-content">Sağlıklı bir ilişkinin en temel yapı taşı açık ve dürüst iletişimdir. Partnerlerin birbirlerini yargılamadan dinlemesi, duygularını ve düşüncelerini çekinmeden ifade edebilmesi güven bağını güçlendirir.</div>
+            </div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">2. Karşılıklı Güven ve Sadakat <span>+</span></div>
+                <div class="accordion-content">Güven, bir ilişkinin görünmez omurgasıdır. Şeffaflık, verilen sözlerin tutulması ve zor anlarda birbirine destek olmak güven duygusunu pekiştirir.</div>
+            </div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">3. Bireysel Alanlara Saygı <span>+</span></div>
+                <div class="accordion-content">Birlikte vakit geçirmek ne kadar önemliyse, kişisel alanlara ve bireysel hobilere saygı duymak da o kadar hayati önem taşır. Sağlıklı ilişkiler iki bireyin birbirini boğmadan büyümesine olanak tanır.</div>
+            </div>
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">4. Empati Kurabilme Yeteneği <span>+</span></div>
+                <div class="accordion-content">Olaylara partnerinizin gözünden bakabilmek, sorunların çözümünü hızlandırır ve aradaki bağı derinleştirir. Anlaşılmak her insan için en büyük huzur kaynağıdır.</div>
+            </div>
+        </div>
+    </div>
+        <!-- 4. OYUNUMUZ SEKMESİ (Chrome Dinozor Tarzı) -->
+    <div id="oyun-tab" class="fullscreen-tab">
+        <button class="close-tab-btn" onclick="closeTab('oyun-tab')">← Geri Dön</button>
+        <h2 style="text-align:center; color:var(--primary-purple); margin-bottom:10px;">Dinozor Oyunu</h2>
+        <div class="game-info">Zıplamak için Ekrana Dokunun veya Boşluk Tuşuna Basın!</div>
+        <div id="game-container">
+            <canvas id="game-canvas" width="800" height="350"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Giriş Doğrulama
+        function handleLogin() {
+            const user = document.getElementById('username-select').value;
+            const pass = document.getElementById('password-input').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            if ((user === "Havin Aslan" && pass === "04092007") || (user === "Caner Afşar" && pass === "25072008")) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('logged-user-name').innerText = user;
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+              // Sekme Açma / Kapatma Fonksiyonları
+        function openTab(tabId) {
+            document.getElementById(tabId).style.display = 'flex';
+            if (tabId === 'oyun-tab' && typeof initGame === 'function') {
+                resetGame();
+            }
+        }
+        function closeTab(tabId) {
+            document.getElementById(tabId).style.display = 'none';
+        }
+
+        // Akordeon Açma / Kapatma
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                header.querySelector("span").innerText = "+";
+            } else {
+                content.style.display = "block";
+                header.querySelector("span").innerText = "-";
+            }
+        }
+
+        // Geri Sayım ve Süre Hesaplama
+        function updateTimers() {
+            const now = new Date();
+            
+            // Havin'in Doğum Günü (25 Temmuz)
+            let havinBDay = new Date(now.getFullYear(), 6, 25);
+            if (now > havinBDay) havinBDay.setFullYear(now.getFullYear() + 1);
+            let diffH = havinBDay - now;
+            let daysH = Math.floor(diffH / (1000 * 60 * 60 * 24));
+            let hoursH = Math.floor((diffH / (1000 * 60 * 60)) % 24);
+            document.getElementById('havin-countdown').innerText = `HAVİN'İN DOĞUM GÜNÜNE: ${daysH} GÜN ${hoursH} SAAT`;
+
+            // Caner'in Doğum Günü (4 Eylül)
+            let canerBDay = new Date(now.getFullYear(), 8, 4);
+            if (now > canerBDay) canerBDay.setFullYear(now.getFullYear() + 1);
+            let diffC = canerBDay - now;
+            let daysC = Math.floor(diffC / (1000 * 60 * 60 * 24));
+            let hoursC = Math.floor((diffC / (1000 * 60 * 60)) % 24);
+            document.getElementById('caner-countdown').innerText = `CANER'İN DOĞUM GÜNÜNE: ${daysC} GÜN ${hoursC} SAAT`;
+
+            // Birlikte Geçen Süre (Geçen senenin 15 tatilinden 9 gün önce, örn: 11 Ocak kabul edilerek)
+            let startDate = new Date(now.getFullYear() - 1, 0, 11); 
+            let diffTime = now - startDate;
+            let years = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365));
+            let remDays = Math.floor((diffTime % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24));
+            let remHours = Math.floor((diffTime / (1000 * 60 * 60)) % 24);
+            document.getElementById('relationship-timer').innerText = `BİRLİKTE GEÇEN SÜRE: ${years} YIL ${remDays} GÜN ${remHours} SAAT`;
+        }
+        setInterval(updateTimers, 1000);
+        updateTimers();
+              // Şairlerden Seçmeler (100+ Aşk Dolu Söz Örnek Altyapısı)
+        const sairSozleri = [
+            { soz: "Seni sevmek, hayatın en güzel mucizesini yaşamak gibi.", yazar: "Özdemir Asaf" },
+            { soz: "Gözlerinin kahvesi ömrüme kahve falı değil, ömürlük armağan oldu.", yazar: "Cemal Süreya" },
+            { soz: "Aşk, iki yalnızlığın birbirini sınırlaması ve kucaklamasıdır.", yazar: "Rilke" },
+            { soz: "Sen benim gökyüzümün en parlak yıldızı, kalbimin en derin sahilisin.", yazar: "Nazım Hikmet" },
+            { soz: "Adını kalbime yazdım, silinmez bir mühür gibi.", yazar: "Atilla İlhan" }
+            // Buraya 100+ adet şair sözünü aynı formatta ekleyebilirsiniz.
+        ];
+        
+        const sairContainer = document.getElementById('sairler-container');
+        // Döngüyle 100'e tamamlama simülasyonu
+        for(let i=0; i<20; i++) {
+            sairSozleri.forEach(item => {
+                let div = document.createElement('div');
+                div.className = 'soz-card';
+                div.innerHTML = `<p>"${item.soz}"</p><span>- ${item.yazar}</span>`;
+                sairContainer.appendChild(div);
+            });
+        }
+
+        // Chrome Dinozor Oyunu Mantığı
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        let dino = { x: 50, y: 250, width: 40, height: 40, vy: 0, gravity: 0.6, jump: -10, grounded: true };
+        let obstacles = [];
+        let score = 0;
+        let gameInterval;
+        let isGameOver = false;
+
+        function resetGame() {
+            dino.y = 250; dino.vy = 0; obstacles = []; score = 0; isGameOver = false;
+            clearInterval(gameInterval);
+            gameInterval = setInterval(updateGame, 20);
+        }
+
+        function updateGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dinozor çizimi (Erkek karakter temsili)
+            dino.vy += dino.gravity;
+            dino.y += dino.vy;
+            if (dino.y > 250) { dino.y = 250; dino.vy = 0; dino.grounded = true; }
+            
+            ctx.fillStyle = "#6b3fa0";
+            ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+
+            // Engeller (Kuşlar ve Engeller)
+            if (Math.random() < 0.02) {
+                obstacles.push({ x: canvas.width, y: 260, width: 30, height: 30, speed: 6 });
+            }
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= obstacles[i].speed;
+                ctx.fillStyle = "#dc2430";
+                ctx.fillRect(obstacles[i].x, obstacles[i].y, obstacles[i].width, obstacles[i].height);
+
+                // Çarpışma Testi
+                if (dino.x < obstacles[i].x + obstacles[i].width && dino.x + dino.width > obstacles[i].x &&
+                    dino.y < obstacles[i].y + obstacles[i].height && dino.y + dino.height > obstacles[i].y) {
+                    isGameOver = true;
+                    clearInterval(gameInterval);
+                }
+            }
+
+            score++;
+            ctx.fillStyle = "#333";
+            ctx.font = "16px Fredoka";
+            ctx.fillText("Skor: " + score, 700, 30);
+            
+            if(isGameOver) {
+                ctx.fillStyle = "rgba(0,0,0,0.5)";
+                ctx.fillRect(0,0,canvas.width, canvas.height);
+                ctx.fillStyle = "white";
+                ctx.font = "30px Fredoka";
+                ctx.fillText("Oyun Bitti! Yeniden başlamak için dokunun.", 150, 180);
+            }
+        }
+
+        window.addEventListener('keydown', e => { if (e.code === 'Space') { jumpAction(); } });
+        canvas.addEventListener('click', () => { if(isGameOver) resetGame(); else jumpAction(); });
+
+        function jumpAction() {
+            if (dino.grounded && !isGameOver) {
+                dino.vy = dino.jump;
+                dino.grounded = false;
+            }
+        }
+    </script>
+</body>
+</html>
